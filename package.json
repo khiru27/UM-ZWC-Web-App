@@ -1,0 +1,24 @@
+{
+  "name": "um-zwc-web-app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "tailwindcss -i ./src/input.css -o ./src/output.css --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/khiru27/UM-ZWC-Web-App.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/khiru27/UM-ZWC-Web-App/issues"
+  },
+  "homepage": "https://github.com/khiru27/UM-ZWC-Web-App#readme",
+  "devDependencies": {
+    "tailwindcss": "^3.4.3"
+  }
+}
