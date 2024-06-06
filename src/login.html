@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UM ZWC Login Page</title>
+    <link rel="stylesheet" href="output.css">
+    <style>
+        body {
+            background-image: url('assets/img/zero\ waste\ bg\ 2.jpg'); /* Replace with your image path */
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center px-4 py-2 bg-[#D9D9D9]">
+    <div class="login-container relative flex flex-col justify-center items-start py-5 w-[580px] rounded-2xl bg-white">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="currentColor" class="absolute top-4 right-[20px] w-12 h-12 text-black hover:text-red-600">
+            <path fill-rule="evenodd" d="M5.47 5.47a.75.75 0 0 1 1.06 0L12 10.94l5.47-5.47a.75.75 0 1 1 1.06 1.06L13.06 12l5.47 5.47a.75.75 0 1 1-1.06 1.06L12 13.06l-5.47 5.47a.75.75 0 0 1-1.06-1.06L10.94 12 5.47 6.53a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
+        </svg>
+        <div class="flex justify-center w-full">
+            <img class="max-w-[150px]" src="assets/img/um zwc logo.jpg" srcset="" alt="UM ZWC Logo">
+        </div>
+        <div class="login-text px-10 w-full">
+            <h1 class="mt-6 mb-4 text-2xl text-black font-bold">Log in to UM ZWC</h1>
+            <form class="login-form flex flex-col" action="#" method="POST">
+                <div>
+                    <p class="mb-2 text-lg text-black font-bold">Email</p>
+                    <input class="w-full mb-6 border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" type="email" name="email" placeholder="Email" required>
+                </div>
+                <div>
+                    <p class="mb-2 text-lg text-black font-bold">Password</p>
+                    <input class="w-full border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" type="password" name="password" placeholder="Password" required>
+                </div>
+                <button class="my-8 bg-[#00A359] text-white font-bold py-2 px-4 rounded hover:bg-[#008846]" type="submit">Login</button>
+            </form>
+            <hr class="border border-[#9F9F9F]">
+            <div class="flex flex-row items-center mt-5 gap-2">
+                <p class="text-black font-bold">New User ?</p>
+                <a href="register.html" class="inline-block bg-[#00A359] hover:bg-[#008846] text-white font-bold py-1 px-4 rounded">
+                Register
+                </a>
+            </div>
+                <!-- <p class="text-[#00A359] font-bold">Register</p> -->
+        </div>
+    </div>
+</body>
+</html>
