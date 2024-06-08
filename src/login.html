@@ -13,6 +13,7 @@
             background-repeat: no-repeat;
         }
     </style>
+    <script type="module" src="firebase-config.js"></script>
 </head>
 <body class="flex items-center justify-center px-4 py-2 bg-[#D9D9D9]">
     <div class="login-container relative flex flex-col justify-center items-start py-5 w-[580px] rounded-2xl bg-white">
@@ -26,16 +27,16 @@
         </div>
         <div class="login-text px-10 w-full">
             <h1 class="mt-6 mb-4 text-2xl text-black font-bold">Log in to UM ZWC</h1>
-            <form class="login-form flex flex-col" action="#" method="POST">
+            <form class="login-form flex flex-col">
                 <div>
                     <p class="mb-2 text-lg text-black font-bold">Email</p>
-                    <input class="w-full mb-6 border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" type="email" name="email" placeholder="Email" required>
+                    <input class="w-full mb-6 border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" type="text" id="email" name="email" placeholder="Email" required>
                 </div>
                 <div>
                     <p class="mb-2 text-lg text-black font-bold">Password</p>
-                    <input class="w-full border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" type="password" name="password" placeholder="Password" required>
+                    <input class="w-full border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" type="password" id="password" name="password" placeholder="Password" required>
                 </div>
-                <button class="my-8 bg-btnGreen text-white font-bold py-2 px-4 rounded hover:bg-[#008846]" type="submit">Login</button>
+                <button class="my-8 bg-btnGreen text-white font-bold py-2 px-4 rounded hover:bg-[#008846]" type="submit" id="login" name="login">Login</button>
             </form>
             <hr class="border border-[#9F9F9F]">
             <div class="flex flex-row items-center mt-5 gap-2">
@@ -48,4 +49,50 @@
         </div>
     </div>
 </body>
+<script type="module">
+    // Import the functions you need from the SDKs you need
+    import { auth, database } from "./firebase-config.js";
+    import { signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { update, ref } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+    // import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js";
+    // TODO: Add SDKs for Firebase products that you want to use
+    // https://firebase.google.com/docs/web/setup#available-libraries
+  
+    // Event Listener for Login Btn
+    login.addEventListener('click', async (e) => {
+        e.preventDefault();
+
+        var email = document.querySelector('#email').value;
+        var password = document.querySelector('#password').value;
+
+        try {
+            const userCredential = await signInWithEmailAndPassword(auth, email, password);
+            // Signed in 
+            const user = userCredential.user;
+                
+            const loginDate = new Date().toISOString();
+            await update(ref(database, 'users/' + user.uid), {
+                last_login_date: loginDate,
+                account_status: 'logged in'
+            });
+
+            console.log('Admin successfully logged into their account!');
+            alert('Admin Login Successful!');
+
+            // Clear the input fields
+            document.querySelector('#email').value = '';
+            document.querySelector('#password').value = '';
+
+            // Redirect to admin-index.html (Admin View)
+            window.location.href = 'admin-index.html';
+        } catch (error) {
+            const errorCode = error.code;
+            const errorMessage = error.message;
+
+            console.log('admin login failed, ' + errorMessage);
+            alert('Login failed, email or password is incorrect.');
+        }
+    });
+</script>
 </html>

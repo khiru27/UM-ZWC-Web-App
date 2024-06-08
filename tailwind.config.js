@@ -11,6 +11,10 @@ module.exports = {
       },
     },
   },
+  variants: {
+    extend: {
+      stroke: ['hover'],
+    },
+  },
   plugins: [],
 }
-
