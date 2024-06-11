@@ -49,21 +49,6 @@
             <h3 class="absolute bottom-4 left-4 text-5xl font-bold text-white">UM Zero Waste Campaign</h3>
         </div>
         <div id="about-us-section" class="flex flex-col p-[30px] gap-[30px] bg-white">
-            <!-- <div class="title-and-content-container p-2 !bg-lightGray" data-id="1">
-                <h2 class="mb-4 font-bold text-xl text-btnGreen">
-                    Introduction:
-                </h2>
-                <p class="text-lg text-black">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Corporis debitis minus esse sit, voluptate, cumque necessitatibus illum voluptatum, ad dolorum molestias tempore. Iusto temporibus ipsa et eos libero molestiae est.</p>
-                <div class="edit-delete-icons-container flex gap-1 justify-end">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" class="edit-icon w-12 h-12 p-1 rounded-xl hover:bg-darkGray">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125" stroke="black"/>
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" stroke="#FFAF05"/>
-                    </svg>  
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="delete-icon w-12 h-12 p-1 rounded-xl hover:bg-darkGray">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" stroke="#CC0000"/>
-                    </svg>
-                </div>                              
-            </div> -->
             <!-- <div class="title-and-content-container p-2 !bg-lightGray">
                 <h2 class="mb-4 font-bold text-xl text-btnGreen">
                     UM ZWC Annual Report:
@@ -129,7 +114,7 @@
 
     <script type="module">
         import { auth, database } from "./firebase-config.js";
-        import { set, update, remove, ref, push } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+        import { set, update, remove, ref, push, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
         // Optional: If you want to close the dropdown when the mouse leaves it
         // document.querySelector('.dropdown').addEventListener('mouseleave', function() {
         //     document.querySelector('.dropdown-content').style.display = 'none';
@@ -158,10 +143,56 @@
             });
         });
 
+        //Function to fetch data from firebase
+        onValue(ref(database, 'containers'), (snapshot) => {
+            const containersData = snapshot.val();
+            if (containersData) {
+                // Clear the about-us-section before rendering
+                const aboutUsSection = document.getElementById('about-us-section');
+                aboutUsSection.innerHTML = '';
+
+                // Iterate through the containers data and create UI elements
+                for (const containerKey in containersData) {
+                    const containerData = containersData[containerKey];
+                    renderContainer(containerKey, containerData.title, containerData.content);
+                }
+            }
+        });
+
+        // Function to render container
+        function renderContainer(containerKey, title, content) {
+            // Create a new title-and-content container
+            const container = document.createElement('div');
+            container.classList.add('title-and-content-container', 'p-2', '!bg-lightGray');
+            container.dataset.key = containerKey; // Assign container key to the dataset
+
+            container.innerHTML = `
+                <h2 class="mb-4 font-bold text-xl text-btnGreen">${title}</h2>
+                <p class="text-lg text-black">${content}</p>
+                <div class="edit-delete-icons-container flex gap-1 justify-end">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" class="edit-icon w-12 h-12 p-1 rounded-xl hover:bg-darkGray cursor-pointer">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125" stroke="black"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" stroke="#FFAF05"/>
+                    </svg>  
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="delete-icon w-12 h-12 p-1 rounded-xl hover:bg-darkGray cursor-pointer">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" stroke="#CC0000"/>
+                    </svg>
+                </div>
+            `;
+
+            // Append the container to the about-us-section
+            document.getElementById('about-us-section').appendChild(container);
+
+            // Attach event listeners
+            const editIcon = container.querySelector('.edit-icon');
+            const deleteIcon = container.querySelector('.delete-icon');
+            addEditEventListener(editIcon, containerKey);
+            addDeleteEventListener(deleteIcon);
+        }
+
+
         // Add Container Function
         document.getElementById('add-icon').addEventListener('click', function() {
-            let containerRef;
-
             // Create a new title-and-content container
             const container = document.createElement('div');
             container.classList.add('title-and-content-container', 'p-2', '!bg-lightGray');
@@ -181,7 +212,7 @@
             document.getElementById('about-us-section').appendChild(container);
 
             // Handle save button click
-            container.querySelector('.save-button').addEventListener('click', function() {
+            container.querySelector('.save-button').addEventListener('click', async function() {
                 const title = container.querySelector('input').value;
                 const content = container.querySelector('textarea').value;
 
@@ -191,12 +222,11 @@
                 }
 
                 // Add data to Realtime Database
-                addDataToDatabase(containerRef, title, content);
+                const { containerRef, containerKey } = await addDataToDatabase(title, content);
 
+                // Remove the input fields and save button, replace with the actual content
                 container.innerHTML = `
-                    <h2 class="mb-4 font-bold text-xl text-btnGreen">
-                        ${title}
-                    </h2>
+                    <h2 class="mb-4 font-bold text-xl text-btnGreen">${title}</h2>
                     <p class="text-lg text-black">${content}</p>
                     <div class="edit-delete-icons-container flex gap-1 justify-end">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" class="edit-icon w-12 h-12 p-1 rounded-xl hover:bg-darkGray cursor-pointer">
@@ -209,124 +239,131 @@
                     </div>
                 `;
 
-                // Add delete event listener to the delete icon
+                // Reattach event listeners to the newly added icons
+                const editIcon = container.querySelector('.edit-icon');
                 const deleteIcon = container.querySelector('.delete-icon');
+                addEditEventListener(editIcon, containerKey);
                 addDeleteEventListener(deleteIcon);
             });
         });
 
-        // Function to add data to Realtime Database
-        function addDataToDatabase(containerRef, title, content) {
-            containerRef = push(ref(database, 'containers'), {
-                title: title,
-                content: content
-            });
-            console.log('New post added with key: ' + containerRef.key);
+        // Function to add data to Firebase
+        async function addDataToDatabase(title, content) {
+            const containersRef = ref(database, 'containers');
+            const newContainerRef = push(containersRef);
+            const containerKey = newContainerRef.key;
+            try {
+                await set(newContainerRef, {
+                    title: title,
+                    content: content
+                });
+                console.log('Data added to database');
+                return { containerRef: newContainerRef, containerKey: containerKey };
+            } catch (error) {
+                console.error('Error adding data to database:', error);
+            }
         }
 
-        // Edit Text Container Function
-        // Select all edit icons
-        document.addEventListener('click', function(e) {
-            const editIcon = e.target.closest('.edit-icon');
-            if (editIcon) {
-                e.preventDefault();
+        // Function to add edit event listener
+        function addEditEventListener(editIcon, containerKey) {
+            editIcon.addEventListener('click', function() {
+                const container = this.closest('.title-and-content-container');
+                const title = container.querySelector('h2').textContent;
+                const content = container.querySelector('p').textContent;
 
-                // Check if the container is already being edited
-                if (editIcon.closest('.title-and-content-container').classList.contains('editing')) {
-                    return; // Exit the function if already editing
-                }
+                container.innerHTML = `
+                    <h2 class="mb-4 font-bold text-xl text-btnGreen">
+                        <input type="text" value="${title}" class="w-full p-2 mb-2 border border-gray-300 rounded">
+                    </h2>
+                    <p class="text-lg text-black">
+                        <textarea class="w-full p-2 border border-gray-300 rounded">${content}</textarea>
+                    </p>
+                    <div class="flex gap-1 justify-end">
+                        <button class="save-button bg-green-500 text-white p-2 rounded hover:bg-green-700">Save</button>
+                    </div>
+                `;
 
-                // Get the container to be edited
-                const container = editIcon.closest('.title-and-content-container');
-                const title = container.querySelector('h2');
-                const content = container.querySelector('p');
-                  
-                // Store original content
-                const originalTitle = title.innerText;
-                const originalContent = content.innerText;
+                container.querySelector('.save-button').addEventListener('click', async function() {
+                    const newTitle = container.querySelector('input').value;
+                    const newContent = container.querySelector('textarea').value;
 
-                // Replace with input fields
-                title.innerHTML = `<input type="text" value="${originalTitle}" class="edit-title w-full p-2 mb-2 border border-gray-300 rounded" />`;
-                content.innerHTML = `<textarea class="edit-content w-full p-2 border border-gray-300 rounded">${originalContent}</textarea>`;
+                    if (!newTitle || !newContent) {
+                        alert('Please fill in both title and content');
+                        return;
+                    }
 
-                // Add save button
-                const saveButton = document.createElement('button');
-                saveButton.innerText = 'Save';
-                saveButton.className = 'save-button p-2 bg-green-500 text-white rounded';
+                    // Update data in Firebase
+                    const containerRef = ref(database, 'containers/' + containerKey);
+                    try {
+                        await set(containerRef, {
+                            title: newTitle,
+                            content: newContent
+                        });
+                        console.log('Data updated in database');
 
-                // Append save button
-                container.appendChild(saveButton);
+                        container.innerHTML = `
+                            <h2 class="mb-4 font-bold text-xl text-btnGreen">${newTitle}</h2>
+                            <p class="text-lg text-black">${newContent}</p>
+                            <div class="edit-delete-icons-container flex gap-1 justify-end">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" class="edit-icon w-12 h-12 p-1 rounded-xl hover:bg-darkGray cursor-pointer">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125" stroke="black"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" stroke="#FFAF05"/>
+                                </svg>  
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="delete-icon w-12 h-12 p-1 rounded-xl hover:bg-darkGray cursor-pointer">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" stroke="#CC0000"/>
+                                </svg>
+                            </div>
+                        `;
 
-                // Set the editing flag
-                container.classList.add('editing');
-
-                // Handle save button click
-                saveButton.addEventListener('click', function() {
-                    const newTitle = container.querySelector('.edit-title').value;
-                    const newContent = container.querySelector('.edit-content').value;
-
-                    // Update UI with new title and content
-                    title.innerHTML = newTitle;
-                    content.innerHTML = newContent;
-
-                    // Remove save button
-                    saveButton.remove();
-
-                    // Remove the editing flag
-                    container.classList.remove('editing');
-
-                    // Get the unique key of the container
-                    const containerKey = container.dataset.key;
-
-                    // Update container in the database
-                    updateDataInDatabase(containerKey, newTitle, newContent);
+                        // Reattach event listeners to the newly created container
+                        const editIcon = container.querySelector('.edit-icon');
+                        const deleteIcon = container.querySelector('.delete-icon');
+                        addEditEventListener(editIcon, containerKey);
+                        addDeleteEventListener(deleteIcon);
+                    } catch (error) {
+                        console.error('Error updating data in database:', error);
+                    }                    
                 });
-            }
-        });
-
-        // Function to update data in Realtime Database
-        function updateDataInDatabase(containerKey, newTitle, newContent) {
-            const containerRef = ref(database, `containers/${containerKey}`);
-            update(containerRef, {
-                title: newTitle,
-                content: newContent
-            }).then(() => {
-                console.log('Content was edited successfully');
-            }).catch((error) => {
-                console.error('Error updating content:', error);
             });
         }
 
         // Delete Text Container Function
-        // Function to add delete event listener to delete icon
+        // Function to add delete event listener
         function addDeleteEventListener(deleteIcon) {
-            deleteIcon.addEventListener('click', function(e) {
-                e.preventDefault();
-                const userConfirmed = confirm("Are you sure you want to delete this item? You can't redo this action.");
-                if (userConfirmed) {
-                    // Get the container key
-                    const containerKey = this.closest('.title-and-content-container').dataset.key;
+            deleteIcon.addEventListener('click', async function() {
+                const container = this.closest('.title-and-content-container');
+                const containerKey = container.dataset.key;
 
-                    // Remove the specific container of the clicked delete icon
-                    const containerElement = this.closest('.title-and-content-container');
-                    containerElement.remove();
-                    console.log('Item deleted');
+                const confirmation = confirm("Are you sure you want to delete this container? You cannot redo this action.");
+        
+                if (confirmation) {
+                    // Remove data from Firebase
+                    const containerRef = ref(database, 'containers/' + containerKey);
+                    try {
+                        await remove(containerRef);
+                        console.log('Item deleted from database');
 
-                    // Remove the corresponding data from the Realtime Database
-                    removeDataFromDatabase(containerKey);
+                        // Remove the container from the DOM
+                        container.remove();
+                    } catch (error) {
+                        console.error('Error deleting item from database:', error);
+                    }
+                } else {
+                    console.log('Deletion cancelled');
                 }
             });
         }
 
         // Function to remove data from Realtime Database
-        function removeDataFromDatabase(containerKey) {
-            const containerRef = ref(database, 'containers/' + containerKey);
-            remove(containerRef).then(() => {
-                console.log('Item deleted from database');
-            }).catch((error) => {
-                console.error('Error deleting item from database:', error);
-            });
-        }
+        // async function removeDataFromDatabase(containerKey) {
+        //     const containerRef = ref(database, 'containers/' + containerKey);
+        //     try {
+        //         await remove(containerRef);
+        //         console.log('Item deleted from database');
+        //     } catch (error) {
+        //         console.error('Error deleting item from database:', error);
+        //     }
+        // }
 
     </script>
 </body>
